@@ -1,7 +1,13 @@
+import Footer from "./Components/Footer";
+import Header from "./Components/Header";
+import Home from "./Pages/Home";
+
 function App() {
   return (
-    <div className="p-2">
-      <h1 className="text-3xl font-bold text-red-300 underline">Blogify!</h1>
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <Home />
+      <Footer />
     </div>
   );
 }
