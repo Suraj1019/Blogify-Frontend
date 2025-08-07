@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getPosts } from "../Services/apis";
 
-// Mock icons (you can replace with your preferred icon library)
 const SearchIcon = () => (
   <svg
     width="24"
@@ -49,75 +49,26 @@ const UserIcon = () => (
   </svg>
 );
 
-const mockPosts = [
-  {
-    id: "1",
-    title: "The Future of AI in Web Development",
-    excerpt:
-      "Exploring how artificial intelligence is revolutionizing the way we build and design websites, from automated code generation to intelligent user experiences.",
-    date: "Dec 15, 2024",
-    tags: ["Artificial Intelligence", "Web Development", "Future Tech"],
-    image:
-      "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80",
-  },
-  {
-    id: "2",
-    title: "Building Responsive Layouts with Modern CSS",
-    excerpt:
-      "Master the art of creating beautiful, responsive layouts using CSS Grid, Flexbox, and the latest CSS features that make development easier.",
-    date: "Dec 12, 2024",
-    tags: ["CSS", "Frontend", "Responsive Design"],
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
-  },
-  {
-    id: "3",
-    title: "React Performance Optimization Tips",
-    excerpt:
-      "Learn proven techniques to make your React applications faster and more efficient, including memoization, lazy loading, and bundle optimization.",
-    date: "Dec 10, 2024",
-    tags: ["React", "Performance", "JavaScript"],
-    image:
-      "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80",
-  },
-  {
-    id: "4",
-    title: "The Complete Guide to TypeScript",
-    excerpt:
-      "From basic types to advanced patterns, discover how TypeScript can improve your development workflow and catch bugs before they reach production.",
-    date: "Dec 8, 2024",
-    tags: ["TypeScript", "JavaScript", "Development"],
-    image:
-      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80",
-  },
-  {
-    id: "5",
-    title: "Designing User Interfaces That Convert",
-    excerpt:
-      "Explore the psychology behind effective UI design and learn practical techniques to create interfaces that engage users and drive conversions.",
-    date: "Dec 5, 2024",
-    tags: ["UI Design", "UX", "Conversion"],
-    image:
-      "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&q=80",
-  },
-  {
-    id: "6",
-    title: "Getting Started with Three.js",
-    excerpt:
-      "Dive into 3D web development with Three.js and learn how to create stunning interactive 3D experiences that run smoothly in the browser.",
-    date: "Dec 3, 2024",
-    tags: ["Three.js", "3D", "WebGL"],
-    image:
-      "https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?w=800&q=80",
-  },
-];
-
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [posts, setPosts] = useState([]);
+
+  const GetPosts = async () => {
+    try {
+      const resp = await getPosts();
+      console.log(resp);
+      setPosts(resp.data);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  useEffect(() => {
+    GetPosts();
+  }, []);
 
   return (
     <main className="max-w-7xl mx-auto px-6 py-12">
-      {/* Hero Section */}
       <div className="text-center mb-16">
         <h2 className="text-5xl font-bold text-gray-900 mb-4">
           Latest Articles
@@ -132,7 +83,7 @@ const Home = () => {
       <div className="flex flex-col sm:flex-row items-center justify-between mb-12 gap-6">
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-500 font-medium">
-            {mockPosts.length} articles
+            {posts.length} articles
           </span>
           <div className="flex gap-2">
             <span className="px-3 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full cursor-pointer hover:bg-blue-200 transition-colors">
@@ -171,23 +122,22 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Blog Posts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockPosts.map((post) => (
+        {posts.map((post) => (
           <article
-            key={post.id}
+            key={post._id}
             className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
           >
             <div className="aspect-video bg-gray-100 overflow-hidden">
               <img
-                src={post.image}
+                src={post.media[0]}
                 alt={post.title}
                 className="w-full h-full object-cover"
               />
             </div>
 
             <div className="p-6">
-              <div className="text-sm text-gray-500 mb-2">{post.date}</div>
+              <div className="text-sm text-gray-500 mb-2">{post.createdAt}</div>
 
               <h3 className="text-xl font-semibold text-gray-900 mb-3">
                 {post.title}
@@ -202,7 +152,7 @@ const Home = () => {
                   overflow: "hidden",
                 }}
               >
-                {post.excerpt}
+                {post.content}
               </p>
 
               <div className="flex flex-wrap gap-2">
